@@ -38,12 +38,12 @@ def endit():
 vm_properties = ["name", "config.uuid", "config.hardware.numCPU",
                  "config.hardware.memoryMB", "guest.guestState",
                  "config.guestFullName", "config.guestId",
-                 "config.version"]
+                 "config.version", "guest.ipAddress"]
 
 args = cli.get_args()
 service_instance = None
 try:
-    service_instance = connect.SmartConnect(host=args.host,
+    service_instance = connect.SmartConnectNoSSL(host=args.host,
                                             user=args.user,
                                             pwd=args.password,
                                             port=int(args.port))
@@ -63,16 +63,20 @@ vm_data = pchelper.collect_properties(service_instance, view_ref=view,
                                       path_set=vm_properties,
                                       include_mors=True)
 for vm in vm_data:
-    print("-" * 70)
-    print("Name:                    {0}".format(vm["name"]))
-    print("BIOS UUID:               {0}".format(vm["config.uuid"]))
-    print("CPUs:                    {0}".format(vm["config.hardware.numCPU"]))
-    print("MemoryMB:                {0}".format(
-        vm["config.hardware.memoryMB"]))
-    print("Guest PowerState:        {0}".format(vm["guest.guestState"]))
-    print("Guest Full Name:         {0}".format(vm["config.guestFullName"]))
-    print("Guest Container Type:    {0}".format(vm["config.guestId"]))
-    print("Container Version:       {0}".format(vm["config.version"]))
+    try:
+        print("-" * 70)
+        print("Name:                    {0}".format(vm["name"]))
+        print("BIOS UUID:               {0}".format(vm["config.uuid"]))
+        print("CPUs:                    {0}".format(vm["config.hardware.numCPU"]))
+        print("MemoryMB:                {0}".format(
+            vm["config.hardware.memoryMB"]))
+        print("Guest PowerState:        {0}".format(vm["guest.guestState"]))
+        print("Guest Full Name:         {0}".format(vm["config.guestFullName"]))
+        print("Guest Container Type:    {0}".format(vm["config.guestId"]))
+        print("Container Version:       {0}".format(vm["config.version"]))
+        print("IP addr:                 {0}".format(vm["guest.ipAddress"]))
+    except KeyError:
+        pass
 
 
 print("")
